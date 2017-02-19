@@ -1,0 +1,41 @@
+@function size($size){
+	$width: 640;
+	$scale: 10;
+	@return ($size / $width * $scale) * 1rem;
+}
+
+@mixin data-dpr($attr,$val){
+	[data-dpr="1"] & {
+		#{$attr}: $val;
+	}
+	[data-dpr="2"] & {
+		#{$attr}: $val * 2;
+	}
+	[data-dpr="3"] & {
+		#{$attr}: $val * 3;
+	}
+}
+
+@mixin font-size($size){
+	@include data-dpr('font-size',$size)	
+}
+
+@mixin border-1px($color) {
+	position: relative;
+	&:after {
+		display: block;
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		border-top: 1px solid $color;
+		content: ''
+	}
+}
+
+@mixin bg-image($url) {
+	background-image: url($url + "@2x.png");
+	@media (-webkit-min-device-pixel-radio: 3),(min-device-pixel-radio: 3) {
+		background-image: url($url + "@3x.png")
+	}
+}

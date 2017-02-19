@@ -1,0 +1,11 @@
+下落小球那，花了很多时间，和vue1的差别
+主要在于enter钩子里done函数的使用。要在transition完成后调用，然后vue才会继续调用afterenter钩子
+
+主要思路：
+1.cartcontrol组件监听click事件，获取event.target，emit给goods父组件
+2.goods接收后，触发定义在goods的_drop函数，该函数里再调用shopcart里的drop函数，event.target被传入drop。
+3.拿到event.target后，就blalala，看注释吧。
+
+购物车动画，也花了很多时间
+主要问题是，enter时，它弹出来到了指定位置后，下一帧就会回去，不会固定在那
+原因是，enter结束时，它会回到原先设置的位置。而不是enter－active设置的位置,所以在shop-list上要设置tranlate3d,-100%
