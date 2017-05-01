@@ -30,13 +30,12 @@
 			</div>
 		</div>
 		<div class="ball-container">
-			
+			<div v-for="ball in balls">
 				<transition 
 					name="drop"
-					v-for="ball in balls"
-					v-on:before-enter="beforeEnter"
-  					v-on:enter="enter"
-  					v-on:after-enter="afterEnter"
+					@before-enter="beforeEnter"
+  					@enter="enter"
+  					@after-enter="afterEnter"
 				>
 					<div class="ball" 		 
 					 	v-show="ball.show"
@@ -44,6 +43,8 @@
 						<div class="inner"></div>	
 					</div>
 				</transition>
+			</div>
+				
 				
 		</div>
 		<transition name="fold">
@@ -58,7 +59,7 @@
 						<span class="name">{{food.name}}</span>
 						<span class="price">¥{{food.price*food.count}}</span>
 						<div class="cartcontrol-wrapper">
-							<cartcontrol :food="food"></cartcontrol>
+							<cartcontrol :food="food" @cartadd="_drop"></cartcontrol>
 						</div>
 					</li>
 				</ul>
@@ -74,7 +75,6 @@
 </template>
 
 <script>
-	import {bus} from '../../bus.js'
 	import BScroll from 'better-scroll'
 	import cartcontrol from 'components/cartcontrol/cartcontrol'
 	
@@ -117,13 +117,6 @@
 				dropBalls: [],
 				fold: true
 			}
-		},
-		created () {
-			//详情页下落小球
-			var self = this
-			bus.$on('cartadd', function (el) {
-				self.drop(el)
-			})
 		},
 		computed: {
 			totalPrice() {
@@ -176,6 +169,10 @@
 			}
 		},
 		methods: {
+			//本身列表的下落小球
+			_drop(el) {
+				this.drop(el)
+			},
 			//变更小球的属性
 			drop(el) {
 				for (let i=0; i<this.balls.length; i++) {
@@ -191,11 +188,11 @@
 			},
 			beforeEnter: function (el) {
 			 	let count = this.balls.length
-			 	//遍历balls，给show＝true的小球设置初始位置
+			 	//遍历balls，给show＝true的小球设置下落时的初始位置
 			 	while(count--) {
 			 		let ball = this.balls[count]
 			 		if (ball.show) {
-			 			let rect = ball.el.getBoundingClientRect()
+			 			let rect = ball.el.getBoundingClientRect() //
 			 			let x = rect.left - 64
 			 			let y = -(window.innerHeight - rect.top - 44)
 			 			el.style.display = 'block'
@@ -222,11 +219,12 @@
   				
   			},
   			afterEnter: function (el) {
+  				//下落之后，把小球的属性初始化
   				let ball = this.dropBalls.shift()
   				if(ball) {
   					ball.show = false
   					el.style.display = 'none'
-  				}	
+  				}
   			},
   			toggleList() {
   				if (!this.totalCount) {

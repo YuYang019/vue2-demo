@@ -38,6 +38,7 @@
       <div class="background">
       	<img :src="seller.avatar">
       </div>
+      <transition name="fade">
       <div class="detail"
 		   v-show="detailShow"
       >
@@ -58,9 +59,7 @@
       				<li class="support-item" 
       					v-for="(item,index) in seller.supports"		
       				>
-						<span class="icon"
-							  :class="classMap[item.type]"
-						></span>
+						<icon :index="index" :type="1"></icon>
 						<span class="text">{{item.description}}</span>
       				</li>
       			</ul>
@@ -76,10 +75,12 @@
       	</div>
       	<div class="detail-close" @click="hideDetail">X</div>
       </div>
+      </transition>
     </div>
 </template>
 
 <script>
+	import icon from 'components/icon/icon'
 	import star from '../star/star'
 
 	export default{
@@ -105,7 +106,7 @@
 			}
 		},
 		components: {
-			star
+			star,icon
 		}	
 	}
 </script>
@@ -239,6 +240,12 @@
 			height: 100%;
 		}
 	}
+	.fade-enter, .fade-leave-active {
+		opacity: 0
+	}
+	.fade-enter-active, .fade-leave-active{
+		transition: all .3s linear;
+	}
 	.detail {
 		position: fixed;
 		z-index: 100;
@@ -286,36 +293,15 @@
 					.support-item {
 						padding: 0 size(24);
 						margin-bottom: size(24);
+						line-height: size(32);
+						font-size: 0;
 						&:last-child {
 							margin-bottom: 0;
-						}
-						.icon {
-							display: inline-block;
-							vertical-align: top;
-							margin-right: size(12);
-							@include data-dpr('width',16px);
-							@include data-dpr('height',16px);
-							background-size: 100%;
-							background-repeat: no-repeat;
-							&.decrease {
-								background-image: url(decrease_1@2x.png)
-							}
-							&.discount {
-								background-image: url(discount_1@2x.png)
-							}
-							&.guarantee {
-								background-image: url(guarantee_1@3x.png)
-							}
-							&.invoice {
-								background-image: url(invoice_1@2x.png)
-							}
-							&.special {
-								background-image: url(special_1@2x.png)
-							}
-						}
+						}						
 						.text {
-							@include data-dpr('line-height',16px);
+							margin-left: size(12);
 							@include font-size(12px);
+							vertical-align: top;
 						}
 					}
 					
@@ -325,10 +311,9 @@
 					top: size(-12);
 					margin: 0 auto;
 					width: 80%;
+					@include font-size(12px);
 					p {
 						padding: 0 size(24);
-						@include font-size(12px);
-						@include data-dpr('line-height',24px);
 					}
 				}
 			}

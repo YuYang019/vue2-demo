@@ -19,7 +19,7 @@
      					<span class="old" v-show="food.oldPrice">¥{{food.oldPrice}}</span>
 					</div>
 					<div class="cartcontrol-wrapper">
-						<cartcontrol :food="food"></cartcontrol>
+						<cartcontrol @cartadd="_drop" :food="food"></cartcontrol>
 					</div>
 					<div @click.stop="addFood($event)" class="buy" v-show="!food.count || food.count === 0">加入购物车</div>
 				</div>
@@ -41,18 +41,18 @@
 					</ratingselect>
 					<div class="rating-wrapper">
 						<ul v-show="food.ratings && food.ratings.length">
-							<li v-for="rating in food.ratings" class="item">
+							<li v-show="needShow(rating.rateType, rating.text)" v-for="rating in food.ratings" class="item">
 								<div class="user">
 									<span class="name">{{rating.username}}</span>
 									<img class="avatar" :src="rating.avatar">
 								</div>
-								<div class="time">{{rating.rateTime}}</div>
-								<p>
+								<div class="time">{{rating.rateTime | formatDate}}</div>
+								<p class="text">
 									<span :class="{'icon-thumb_up':rating.rateType===0,'icon-thumb_down':rating.rateType===1}"></span>{{rating.text}}
 								</p>
 							</li>
 						</ul>
-						<div class="no-rating" v-show="!food.ratings || !food.ratings.length"></div>
+						<div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
 					</div>
 				</div>	
 			</div>
@@ -66,6 +66,7 @@
     import Vue from 'vue'
     import split from 'components/split/split'
     import ratingselect from 'components/ratingselect/ratingselect'
+    import {formatDate} from '../../common/js/date'
 
     const POSITIVE = 0;
 	const NEGATIVE = 1;
@@ -90,7 +91,10 @@
 			}
 		},
 		methods: {
-			show() {
+			_drop(target) {
+				this.$emit('cartadd', target)
+			},
+ 			show() {
 				this.showFlag = true
 				this.selectType = ALL
 				this.onlyContent = false
@@ -116,9 +120,31 @@
 			},
 			selectRating(type) {
 				this.selectType = type
+				this.$nextTick(() => {
+					this.scroll.refresh()
+				})
 			},
 			toggleContent() {
 				this.onlyContent = !this.onlyContent
+				this.$nextTick(() => {
+					this.scroll.refresh()
+				})
+			},
+			needShow(type, text) {
+				if(this.onlyContent && !text) {
+					return false;
+				}
+				if(this.selectType === ALL){
+					return true;
+				} else {
+					return type === this.selectType;
+				}
+			}
+		},
+		filters: {
+			formatDate(time) {
+				let date = new Date(time)
+				return formatDate(date, 'yyyy-MM-dd hh:mm')
 			}
 		},
 		components: {
@@ -129,6 +155,7 @@
 
 <style lang="scss">
 	@import "../../common/scss/index.scss";
+	@import "../../common/scss/icon.css";
 	
 	.food {
 		position: fixed;
@@ -253,7 +280,59 @@
 				font-weight: 700;
 			}
 			.rating-wrapper {
-				
+				padding: 0 size(36);
+				.item {
+					position: relative;
+					padding: size(32) 0;
+					border-bottom: size(1) solid rgba(7,17,27,0.1);
+					.user {
+						position: absolute;
+						right: 0;
+						top: size(32);
+						line-height: size(24);
+						font-size: 0;
+						.avatar {
+							width: size(24);
+							height: size(24);
+							border-radius: 50%;
+						}
+						.name {
+							display: inline-block;
+							margin-right: size(12);
+							vertical-align: top;
+							@include font-size(12px);
+							color: rgb(147, 153, 159);
+						}
+					}
+					.time {
+						margin-bottom: size(12);
+						line-height: size(24);
+						@include font-size(10px);
+						color: rgb(147, 153, 159);
+					}
+					.text {
+						line-height: size(32);
+						@include font-size(12px);
+						color: rgb(7,17,27);
+						.icon-thumb_up,.icon-thumb_down {
+							display: inline-block;
+							line-height: size(32);
+							margin-right: size(8);
+							@include font-size(12px);
+						}
+						.icon-thumb_up {
+							color: rgb(0, 160, 220);
+						}
+						.icon-thumb_down {
+							color: rgb(147, 153, 159);
+						}
+					}
+				}
+				.no-rating {
+					padding: size(32) 0;
+					@include font-size(12px);
+					color: rgb(147, 153, 159)
+				}
 			}
 		}
 	}

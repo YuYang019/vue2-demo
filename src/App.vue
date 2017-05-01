@@ -14,13 +14,16 @@
         </li>
       </ul>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>    
   </div>
 </template>
 
 <script>
 import header from './components/header/header'
 import axios from 'axios'
+import {urlParse} from './common/js/util.js'
 
 const ERR_OK = 0
 
@@ -28,15 +31,21 @@ export default {
   name: 'app',
   data() {
     return {
-      seller: {}
+      seller: {
+        id: (() => {
+          let queryParam = urlParse();
+          console.log(queryParam)
+          return queryParam.id
+        })()
+      }
     }
   },
   created() {
-    axios.get('/api/seller')
+    axios.get('/api/seller?id=' + this.seller.id)
       .then(response => {
         console.log(response.data)
         if (response.data.errno === ERR_OK) {
-          this.seller = response.data.data
+          this.seller = Object.assign({}, this.seller, response.data.data)
         }
       })
   },

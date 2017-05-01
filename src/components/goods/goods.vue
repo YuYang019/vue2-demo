@@ -1,4 +1,5 @@
 <template>
+   <div class="goods-wrapper">
 	<div class="goods">	
       <div class="menu-wrapper" ref="menuWrapper">
       	<ul>
@@ -46,9 +47,10 @@
       		</li>
       	</ul>
       </div>
-      <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
-      <food :food="foodDetail" @cartadd="_drop" ref="food"></food>		
+      <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>  
     </div>
+    <food :food="foodDetail" @cartadd="_drop" ref="food"></food>
+   </div>
 </template>
 
 <script>
@@ -147,7 +149,8 @@
 					let item = foodList[i]
 					height += item.clientHeight
 					this.listHeight.push(height)
-				}	
+				}
+				console.log(this.listHeight)	
 			},
 			selectMenu(index,event) {
 				//触摸点击会有_constructed属性
@@ -156,7 +159,7 @@
 				}
 				let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
 				let el = foodList[index]
-				this.foodsScroll.scrollToElement(el, 300)
+				this.foodsScroll.scrollToElement(el, 300) //bscroll的api，跳到指定节点
 			},
 			_drop: function(target) {
 				this.$refs.shopcart.drop(target)

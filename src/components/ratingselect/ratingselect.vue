@@ -1,4 +1,4 @@
-<template>
+;<template>
 	<div class="ratingselect">
 		<div class="rating-type">
 			<span @click="select(2,$event)" 

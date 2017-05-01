@@ -1,6 +1,9 @@
-goods组件中，包含两个组件，cartcontrol和shopcart
+goods组件中，包含两个组件，cartcontrol和shopcart，food
 
 要关注一下，如何做到选取的食物数据，在三个组件之间共享。
 首先goods,在v－for的时候，用prop把每种食物传入他们自己的cartcontrol。在cartcontrol里监听选取和取消按键，一旦选取，添加count属性计数。注意，子组件里添加了属性，在父组件里，同样能接收到。
 在goods里，维护一个selectfoods的数组，利用计算属性，一旦count变化，就把该food添入数组
 然后，把selectfood传入shopcart，这样，就实现了数据共享，主要是利用动态prop。
+
+如何实现商品列表滑动等效果
+created时，计算好每个商品类别的所在高度，放置于一个数组里，bscroll监听scrollY并赋值给this.scrollY，计算属性里，判断这个scrollY所在位置并确定index

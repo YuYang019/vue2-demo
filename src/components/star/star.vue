@@ -9,9 +9,9 @@
 
 <script>
 	const LENGTH = 5;
-	const CLS_ON = 'on';
-	const CLS_HALF = 'half';
-	const CLS_OFF = 'off';
+	const CLS_ON = 'on'; //全星
+	const CLS_HALF = 'half'; //半星
+	const CLS_OFF = 'off'; //灰色星
 
 	export default {
 		props: {
@@ -28,9 +28,10 @@
 			},
 			itemClasses() {
 				let result = []
+				//3.1 => 3 , 3.2 => 3 , 3.5 => 3.5 , 3.6 =>3.5 , 3.8 =>  3.5 , 4=> 4
 				let score = Math.floor(this.score * 2) / 2
-				let hasDecimal = score % 1 !== 0
-				let intger = Math.floor(score)
+				let hasDecimal = score % 1 !== 0 //是否有半颗星
+				let intger = Math.floor(score) //完整的星的数目
 				for (let i = 0; i < intger; i++) {
 					result.push(CLS_ON)
 				}

@@ -1,0 +1,1 @@
+这里只在点击的时候传递一次了，原来是传递两个，一个传给bus，一个传到父组件。现在不用bus了，有bug，因为无法知道是在food里还是goods里被点击，这样会导致无用的传递和预期之外的动画效果。现在实现food页的下落小球，是传递了两次target，cart传给food，food传给goods，再在goods里调用shopcarts里的函数
